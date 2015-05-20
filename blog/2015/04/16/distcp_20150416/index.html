@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> バージョンの異なるクラスタ間でのdistcp &middot; motomizuki</title>
+
+  
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/poole.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/hyde.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/poole-overrides.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/hyde-x.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/share.css">
+
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/highlight/sunburst.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link href="/favicon.png" rel="icon">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="distcp_20150416 &middot; motomizuki" />
+
+  <meta name="description" content="CDH4のクラスタからCDH5へファイルをコピーするさいのメモ">
+  <meta name="keywords" content="hadoop,hdfs,distcp">
+  
+</head>
+<body class="theme-base-09 layout-reverse">
+<div class="topbar">
+  <div class="container topbar-sticky">
+    <div class="topbar-about">
+      
+      <h1>motomizuki</h1>
+      <p class="lead">Book,  Classic,  Programming</p>
+    </div>
+
+    <ul class="topbar-nav">
+      <li class="topbar-nav-item"><a href="http://motomizuki.github.io//">Blog</a></li>
+      
+
+      <li class="topbar-nav-item"><a href="https://github.com/motomizuki">GitHub</a></li>
+      
+      
+      
+      <li class="topbar-nav-item"><a href="https://twitter.com/motomizuki">Twitter</a></li>
+    </ul>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>バージョンの異なるクラスタ間でのdistcp</h1>
+    <span class="post-date">Apr 16, 2015 &middot; 1 minute read</span>
+    
+    <span class="post-date">
+    
+    <a class="label" href="http://motomizuki.github.io//categories/hadoop">hadoop</a><a class="label" href="http://motomizuki.github.io//categories/hdfs">hdfs</a><a class="label" href="http://motomizuki.github.io//categories/memo">memo</a>
+    </span>
+    
+
+<h2 id="目的:a0ed70356740ff40d5d679d15c824608">目的</h2>
+
+<p>Hadoopサーバを更新するにあたってファイルを引越しする。旧サーバはCDH4で新サーバはCDH5で構成されて、ファイルをローカルに落とすことなく直接hdfsにコピーしたい。</p>
+
+<h2 id="はまったところ:a0ed70356740ff40d5d679d15c824608">はまったところ</h2>
+
+<ul>
+<li>バージョンが違うためにhdfsプロトコルではエラーが発生</li>
+<li>ワイルドカードでのファイル指定ができない</li>
+<li>ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生</li>
+</ul>
+
+<h2 id="解決策:a0ed70356740ff40d5d679d15c824608">解決策</h2>
+
+<h3 id="バージョンが違うためにhdfsプロトコルではエラーが発生:a0ed70356740ff40d5d679d15c824608">バージョンが違うためにhdfsプロトコルではエラーが発生</h3>
+
+<p>通常は</p>
+
+<pre><code>hadoop distcp hdfs://FROM_HOST/filedir hdfs://TO_HOST/firedire
+</code></pre>
+
+<p>でコピーが行われるのだが、バージョンが異なるとエラーが発生する。</p>
+
+<p>そこで、コピー先(TO_HOST)にsshして以下のコマンドを実行</p>
+
+<pre><code>hadoop distcp hftp://FROM_HOST/filedir hdfs://TO_HOST/firedire
+</code></pre>
+
+<p>クラスター同士のバージョンが違う場合はfromのプロトコルをhdfsからhftpもしくはwebhdfsに変更するとコピーができる。</p>
+
+<h3 id="ワイルドカードでのファイル指定ができない:a0ed70356740ff40d5d679d15c824608">ワイルドカードでのファイル指定ができない</h3>
+
+<p>数百のファイルをコピーする必要があったのだが、</p>
+
+<pre><code>hadoop distcp hftp://FROM_HOST/hoge/*.log hdfs://TO_HOST/hoge/.
+</code></pre>
+
+<p>のようにワイルドカード(*)を利用するとそんなファイルはないと怒られる。
+そこで、コピー元のサーバのhdfsからコピーするファイルのリストを作成する必要がある。</p>
+
+<pre><code>hadoop fs -ls hdfs:///hoge/ | grep -e *.log | awk '{gsub(&quot;hdfs&quot;, &quot;hftp&quot;);gsub(&quot;///&quot;, &quot;//FROM_HOST/&quot;);print $8'}   &gt; input-files.txt
+</code></pre>
+
+<p>このinput-files.txtをTO_HOSTにもっていき以下を実行でこぴーができる。</p>
+
+<pre><code>hadoop fs -put input-files.txt  .
+hadoop distcp -f input-files.txt hdfs://TO_HOST/hoge/.
+</code></pre>
+
+<h3 id="ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生:a0ed70356740ff40d5d679d15c824608">ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生</h3>
+
+<p>次のコマンドでpermissionを変更</p>
+
+<pre><code>sudo -u hdfs hadoop fs -chmod -R 777 /hoge
+</code></pre>
+
+    <ul id="social_box">
+    <li><a href="http://twitter.com/share?text=%e3%83%90%e3%83%bc%e3%82%b8%e3%83%a7%e3%83%b3%e3%81%ae%e7%95%b0%e3%81%aa%e3%82%8b%e3%82%af%e3%83%a9%e3%82%b9%e3%82%bf%e9%96%93%e3%81%a7%e3%81%aedistcp" target="_blank"><img src="/img/sns_tw_ico.png" alt="twitter"></a><span></span></li>
+    <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fmotomizuki.github.io%2fblog%2f2015%2f04%2f16%2fdistcp_20150416%2f" target="_blank"><img src="/img/sns_fb_ico.png" alt="facebook"></a><span></span></li>
+    <li><a href="http://b.hatena.ne.jp/entry/http://motomizuki.github.io/blog/2015/04/16/distcp_20150416/" target="_blank"><img src="/img/sns_hb_ico.png" alt=""></a><span></span></li>
+</ul>
+
+
+  </div>
+</div>
+<p class="license">Copyright &copy; 2015 <a href="https://twitter.com/motomizuki">@motomizuki</a> 
+Powered by <a href="http://hugo.spf13.com">Hugo</a>
+
+<script src="http://motomizuki.github.io//js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-29342124-2', 'auto');
+    ga('send', 'pageview');
+
+</script>
+</body>
+</html>
+

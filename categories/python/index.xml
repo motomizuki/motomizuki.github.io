@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on motomizuki blog</title>
+    <link>http://motomizuki.github.io/categories/python/</link>
+    <description>Recent content in Python on motomizuki blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Wed, 20 May 2015 23:49:04 +0900</lastBuildDate>
+    <atom:link href="http://motomizuki.github.io/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>sqlalchemy_update_20150520</title>
+      <link>http://motomizuki.github.io/blog/2015/05/20/sqlalchemy_update_20150520/</link>
+      <pubDate>Wed, 20 May 2015 23:49:04 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/20/sqlalchemy_update_20150520/</guid>
+      <description>
+
+&lt;h1 id=&#34;概要:ab29909ef1624f319953bc652660642e&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;ノイズのある&lt;code&gt;dictionary&lt;/code&gt;データからSQLAlchemyを使って簡単にupdateしたい。
+フォームからデータを受け取るとModelに必要のないデータも含まれてしまうことがある。
+そういったものをいちいち指定せずによしなにupdateを行えるようにする。&lt;/p&gt;
+
+&lt;h1 id=&#34;通常のupdateの方法:ab29909ef1624f319953bc652660642e&#34;&gt;通常のupdateの方法&lt;/h1&gt;
+
+&lt;p&gt;通常のupdateは次のような感じ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;stmt = Users.update().\
+            where(Users.id==5).\
+            values(name=&#39;user #5&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;もしくは&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;user = Users.query.filter_by(id=5).first()
+user.name=&amp;quot;hoge&amp;quot;
+db.session.commit()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;今回の方法:ab29909ef1624f319953bc652660642e&#34;&gt;今回の方法&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;setattr(obj, key, value)&lt;/code&gt;を使っていく。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class Users(db.Model):
+    id = db.Column(db.Integer, primarykey=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, id, name, password):
+        self.id = user_id
+        self.name = name
+        self.password = password
+
+    def update_dict(dict):
+        for name, value in dict.items():
+            if name in self.__dict__:
+                setattr(self, name, value)
+
+
+# 更新操作
+dict = {&amp;quot;name&amp;quot;; hoge, &amp;quot;password&amp;quot;:fuga}
+user=Users.query.filter_by(id=5).first()
+user.update_form(dict)
+db.session.commit()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こんな感じの&lt;code&gt;update_dict&lt;/code&gt;をモデルに実装すると、
+&lt;code&gt;dictionary&lt;/code&gt;を無造作に入れても、定義されている値のみが変更され、
+データの更新が行われるので楽。
+フォームをモデルに合うように作るだけで、データの追加更新を簡単に実装できるようになる。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

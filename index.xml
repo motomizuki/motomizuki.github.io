@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>motomizuki blog</title>
+    <link>http://motomizuki.github.io/</link>
+    <description>Recent content on motomizuki blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Wed, 20 May 2015 23:49:04 +0900</lastBuildDate>
+    <atom:link href="http://motomizuki.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>sqlalchemy_update_20150520</title>
+      <link>http://motomizuki.github.io/blog/2015/05/20/sqlalchemy_update_20150520/</link>
+      <pubDate>Wed, 20 May 2015 23:49:04 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/20/sqlalchemy_update_20150520/</guid>
+      <description>
+
+&lt;h1 id=&#34;概要:ab29909ef1624f319953bc652660642e&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;ノイズのある&lt;code&gt;dictionary&lt;/code&gt;データからSQLAlchemyを使って簡単にupdateしたい。
+フォームからデータを受け取るとModelに必要のないデータも含まれてしまうことがある。
+そういったものをいちいち指定せずによしなにupdateを行えるようにする。&lt;/p&gt;
+
+&lt;h1 id=&#34;通常のupdateの方法:ab29909ef1624f319953bc652660642e&#34;&gt;通常のupdateの方法&lt;/h1&gt;
+
+&lt;p&gt;通常のupdateは次のような感じ。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;stmt = Users.update().\
+            where(Users.id==5).\
+            values(name=&#39;user #5&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;もしくは&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;user = Users.query.filter_by(id=5).first()
+user.name=&amp;quot;hoge&amp;quot;
+db.session.commit()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;今回の方法:ab29909ef1624f319953bc652660642e&#34;&gt;今回の方法&lt;/h1&gt;
+
+&lt;p&gt;&lt;code&gt;setattr(obj, key, value)&lt;/code&gt;を使っていく。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class Users(db.Model):
+    id = db.Column(db.Integer, primarykey=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, id, name, password):
+        self.id = user_id
+        self.name = name
+        self.password = password
+
+    def update_dict(dict):
+        for name, value in dict.items():
+            if name in self.__dict__:
+                setattr(self, name, value)
+
+
+# 更新操作
+dict = {&amp;quot;name&amp;quot;; hoge, &amp;quot;password&amp;quot;:fuga}
+user=Users.query.filter_by(id=5).first()
+user.update_form(dict)
+db.session.commit()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こんな感じの&lt;code&gt;update_dict&lt;/code&gt;をモデルに実装すると、
+&lt;code&gt;dictionary&lt;/code&gt;を無造作に入れても、定義されている値のみが変更され、
+データの更新が行われるので楽。
+フォームをモデルに合うように作るだけで、データの追加更新を簡単に実装できるようになる。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>whatislife_20150517</title>
+      <link>http://motomizuki.github.io/blog/2015/05/17/whatislife_20150517/</link>
+      <pubDate>Sun, 17 May 2015 12:40:54 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/17/whatislife_20150517/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/41fz6T2gnnL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:e9596c2634bb30f3adfc6f3717a862b3&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;分子生物学の基礎となった本。生物の構造や遺伝の仕組みを物理学と科学で説明している。なんで生物は原子に比べて大きいのか、生物としての安定性と量子の不安定性、負のエントロピー論など。&lt;/p&gt;
+
+&lt;h1 id=&#34;浅い感想とか:e9596c2634bb30f3adfc6f3717a862b3&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;生物の仕組み、細胞や染色体の構造が分かりやすく楽しく説明してあった。DNAの構造が発見される前の講演をまとめたものなのに、シュレーディンガーはその本質をきちんと捉えていて脱帽。&lt;/p&gt;
+
+&lt;p&gt;一つの事象をみることと全体を見ることの違いがあり、どちらも重要。一つの事象の振る舞いと全体としての振る舞いが異なることは往々にしてあるので、木を見て森をみず、森をみて木を見ずにならないようバランスをとっていきたい。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>toukeigaku_20150509</title>
+      <link>http://motomizuki.github.io/blog/2015/05/09/toukeigaku_20150509/</link>
+      <pubDate>Sat, 09 May 2015 16:17:59 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/09/toukeigaku_20150509/</guid>
+      <description>
+
+&lt;p&gt;![img]()&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:fec2177789c9c98e09aea6745796f0e8&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;統計学の基礎部分を文章や、例、図を用いて分かりやすく解説。
+逆に数式や照明といったものは少なく（巻末に少し)、
+統計を実務でどう使うかその指標の意味はといった部分が中心になっている。&lt;/p&gt;
+
+&lt;h1 id=&#34;浅い感想とか:fec2177789c9c98e09aea6745796f0e8&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;基本概念は抑えており、実際の解析にはライブラリやツールを使うのだから
+数式とかはそこまで要らないよねって感じのもの。
+そもそも統計をやって見つけたいことが重要で、統計手法自体よりもどんなデータにはどんな手法を適用すればいいか、解析結果を誤読しないためのポイント、必要な考え方がまとめてある。
+実務で統計を使い始めるには十分かなと思うので、
+書かれている概念をすらっと実務で応用できるようにもう少し読み込んでみる。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>theempireofthestarts_20150505</title>
+      <link>http://motomizuki.github.io/blog/2015/05/05/theempireofthestarts_20150505/</link>
+      <pubDate>Tue, 05 May 2015 16:09:16 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/05/theempireofthestarts_20150505/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51mVyq9S-mL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:69a2d180d563b68e18cf92a0ad494f2d&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;白色矮星を研究していたスブラマニアン・チャンドラセガールの生涯を描いた本。
+白色矮星に関わる波乱に満ちた研究活動やその他の研究について、時代を追いながら
+他の研究者との関わりや研究分野を超え関連を丁寧に示している。&lt;/p&gt;
+
+&lt;p&gt;話の中心は当時のイギリス天文学界の巨人であったエディントンとの対立と物理学と天文学の融合。
+相対性理論や素粒子論が与えた天文学への影響や、逆に天文学が与えた素粒子論絵の影響と&lt;/p&gt;
+
+&lt;h1 id=&#34;浅い感想とか:69a2d180d563b68e18cf92a0ad494f2d&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;ミクロな世界とマクロな世界を結びつけ同じような式で扱えるように構造化するには、
+その分野の知識だけでは無理で、様々なところにアンテナを張っていなければならない。
+そういったアンテナを張るにはその分野で一番の人と知り合いになり議論ができる環境を作れるかどうかなんだなと思った。&lt;/p&gt;
+
+&lt;p&gt;だからこそその分野のトップの人とうまくいかないと、それに付随する様々なことがうまくいかなくなってしまう。また積み上げたものが大きい人ほど、違う視点が受け入れられないもので、トップの人の嫉妬や執着のすごさに驚いた。逆に自分の分野と重なるようで重ならない人ほど協力的なのはやはりライバルとして認識されているかどうかなのかな。。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>kowaie_20150505</title>
+      <link>http://motomizuki.github.io/blog/2015/05/05/kowaie_20150505/</link>
+      <pubDate>Tue, 05 May 2015 15:56:28 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/05/kowaie_20150505/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51%2B2msfhlKL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:6840278148a8d53c3990b698bb0e05c9&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;怖い絵の第3巻。　
+解説されている絵画は22作品。&lt;/p&gt;
+
+&lt;h1 id=&#34;浅い感想とか:6840278148a8d53c3990b698bb0e05c9&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;王族／貴族の絵が多く、青き血の恐ろしさが少しわかった。
+血族間での婚姻が多い西洋ではやはり子供の出生率の低下や生存率がさがっていて、
+そういった子孫が途切れるまさにその子供たちの絵は背景を知らなくてもゾッとするような絵だった。
+背景を知るともっとゾッとした。日本の徳川家とかであまりそういう話を聞かないのは、大奥のおかげだったり、大名家がそれなりな数いたからなのかなーと思った。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>booklist_20150502</title>
+      <link>http://motomizuki.github.io/blog/2015/05/02/booklist_20150502/</link>
+      <pubDate>Sat, 02 May 2015 11:14:13 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/02/booklist_20150502/</guid>
+      <description>&lt;ol&gt;
+&lt;li&gt;楽園のカンヴァス：原田マハ&lt;/li&gt;
+&lt;li&gt;宗教都市・大阪 前衛都市・京都：五木寛之&lt;/li&gt;
+&lt;li&gt;幸福論：アラン&lt;/li&gt;
+&lt;li&gt;ZERO to ONE：ピーター・ティール&lt;/li&gt;
+&lt;li&gt;日本人数のしきたり：飯倉晴武&lt;/li&gt;
+&lt;li&gt;知の休日：五木寛之&lt;/li&gt;
+&lt;li&gt;銀河ヒッチハイク・ガイド：ダグラス・アダムス&lt;/li&gt;
+&lt;li&gt;How Google Works：エリック・シュミット&lt;/li&gt;
+&lt;li&gt;イノベーションのジレンマ 増補改訂版：クレイトン・クリステンセン&lt;/li&gt;
+&lt;li&gt;宇宙の果てのレストラン：ダグラス・アダムス&lt;/li&gt;
+&lt;li&gt;ブルー・オーシャン戦略：W・チャン・キム、レネ・モボルニュ&lt;/li&gt;
+&lt;li&gt;被取締役新入社員:安藤祐介&lt;/li&gt;
+&lt;li&gt;怖い絵：中野京子&lt;/li&gt;
+&lt;li&gt;トータル・リコール：Philip K. Dick&lt;/li&gt;
+&lt;li&gt;人間以前：Philip K. Dick&lt;/li&gt;
+&lt;li&gt;怖い絵-泣く女篇-:中野京子&lt;/li&gt;
+&lt;li&gt;入門 実践する統計学：藪友良&lt;/li&gt;
+&lt;li&gt;携帯電話はなぜつながるのか: 中島信生、有田武美、樋口健一&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>intel_start_20150502</title>
+      <link>http://motomizuki.github.io/blog/2015/05/02/intel_start_20150502/</link>
+      <pubDate>Sat, 02 May 2015 01:45:13 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/02/intel_start_20150502/</guid>
+      <description>
+
+&lt;h1 id=&#34;概要:1b5e181266a082df79f13dab2f943bfc&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;Intel Edison Ardino Kit を購入したので、
+箱を開けてからセットアップするまでのメモ
+&lt;a href=&#34;https://software.intel.com/en-us/iot/library/edison-getting-started&#34;&gt;Intelの出してるチュートリアル参照&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;組み立て:1b5e181266a082df79f13dab2f943bfc&#34;&gt;組み立て&lt;/h1&gt;
+
+&lt;p&gt;Edisonさんをボードのピンにさして、ちっちゃなナットを締めるだけ。ナットは本当に小さいので無くさないように。ビスを締める際は奥側のビスを強めに締めるといいかも。対角線でしか固定されないので、チップが湾曲してボードと微妙な隙間ができて電源が付かなかった。。
+&lt;img src=&#34;http://i.gyazo.com/17106a4f8fe140690535b19aad91776d.png&#34; alt=&#34;img&#34; /&gt;
+
+あとは4つの足を付けて組み立て完成。&lt;/p&gt;
+
+&lt;h1 id=&#34;セットアップ:1b5e181266a082df79f13dab2f943bfc&#34;&gt;セットアップ&lt;/h1&gt;
+
+&lt;h2 id=&#34;ログイン確認:1b5e181266a082df79f13dab2f943bfc&#34;&gt;ログイン確認&lt;/h2&gt;
+
+&lt;p&gt;J18(usb給電)とJ3(usb接続)にmicro USBをさすとPCと接続できる。チュートリル通りに&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;screen /dev/cu.usbserial-XXXXXXXX 115200 -L
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とやってEnterを2回押してログインできる。
+login name は root　で初回のパスワードは無し！&lt;/p&gt;
+
+&lt;h2 id=&#34;ファームウェアのアップデート:1b5e181266a082df79f13dab2f943bfc&#34;&gt;ファームウェアのアップデート&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Configure Username and Password&lt;/strong&gt;の最初に&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;Flash your Firmware to get the latest features and important updates.&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;とあるので最新イメージをEdisonに書き込む。最新イメージは&lt;a href=&#34;http://www.intel.com/support/edison/sb/CS-035180.html&#34;&gt;公式サイト&lt;/a&gt;で落とせるYocto complete image&lt;/p&gt;
+
+&lt;p&gt;既存のファイル、フォルダを削除してダウンロードしたファイルを全部Edisonディレクトリに移す。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rm -rf /Volumes/Edison/*
+rm -rf /Volumes/Edison/\.*
+cp ~/Downloads/edison-image-ww05-15/* /Volumes/Edison/.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;screen&lt;/code&gt;でEdisonに入り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;reboot ota
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でアップデートが完了する。
+reboot中に電源が落ちないよう注意する。&lt;/p&gt;
+
+&lt;h2 id=&#34;edisonのセットアップ:1b5e181266a082df79f13dab2f943bfc&#34;&gt;Edisonのセットアップ&lt;/h2&gt;
+
+&lt;p&gt;Edisonに入ってから&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;configure_edison --setup 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で初期設定をしていく。
+設定項目はrootのパスワードと, edisonの名前(host名),
+使用するwifi。
+設定後にedisonの名前で\&lt;a href=&#34;http://host.local`でEdisonのwebサーバにアクセスできる。sshも&#34;&gt;http://host.local`でEdisonのwebサーバにアクセスできる。sshも&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh root@host.local
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で利用可能になり、USBでつながなくてもEdisonを操作できるようになる。ただsshよりもシリアル接続の方がレスポンスがいいのでストレスは少ないかも。&lt;/p&gt;
+
+&lt;h1 id=&#34;lチカ:1b5e181266a082df79f13dab2f943bfc&#34;&gt;Lチカ&lt;/h1&gt;
+
+&lt;p&gt;Hello world!的な存在らしいLチカをためしてみた。
+&lt;img src=&#34;http://i.gyazo.com/d4ef680f9f68133d498d8a37dd93f93f.png&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int led = 13;
+
+void setup() {
+    // put your setup code here,  to run once:
+    pinMode(led, OUTPUT);
+}
+
+void loop() {
+    // put your main code here,  to run repeatedly:
+    digitalWrite(led, HIGH);
+    delay(1000);
+    digitalWrite(led,  LOW);
+    delay(1000);
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>kowaie_20150430</title>
+      <link>http://motomizuki.github.io/blog/2015/05/01/kowaie_20150430/</link>
+      <pubDate>Fri, 01 May 2015 08:03:34 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/01/kowaie_20150430/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51JOW5j8t%2BL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:cc7a29ee2ba794d211c393f05e0f0f32&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;怖い絵の第２巻。全２２作品を解説している。&lt;/p&gt;
+
+&lt;h1 id=&#34;浅い感想とか:cc7a29ee2ba794d211c393f05e0f0f32&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;1巻を読んで、絵の部分を意識的に細部まで見てから解説を読むのだけど、
+全く気づかない部分に解説の焦点が当てられていて教養の違いと、面白さを感じた。
+残りの死と乙女篇も楽しみ。&lt;/p&gt;
+
+&lt;p&gt;ちょうどフェルメール展やってるし、見に行きたい。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ningenizen_20150430</title>
+      <link>http://motomizuki.github.io/blog/2015/05/01/ningenizen_20150430/</link>
+      <pubDate>Fri, 01 May 2015 08:03:25 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/01/ningenizen_20150430/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51uKP1YkYJL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:67857ad4aea3653b161c8e432b631967&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;ディックの短編傑作集、SFホラーチックな作品が多い。
+収録作品は&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;地図にない街&lt;/li&gt;
+&lt;li&gt;妖精の王&lt;/li&gt;
+&lt;li&gt;この卑しい地上に&lt;/li&gt;
+&lt;li&gt;欠陥ビーバー&lt;/li&gt;
+&lt;li&gt;不法侵入者&lt;/li&gt;
+&lt;li&gt;宇宙の死者&lt;/li&gt;
+&lt;li&gt;父さんもどき&lt;/li&gt;
+&lt;li&gt;新世代&lt;/li&gt;
+&lt;li&gt;ナニー&lt;/li&gt;
+&lt;li&gt;フォスター、お前はもう死んでるぞ&lt;/li&gt;
+&lt;li&gt;人間以前&lt;/li&gt;
+&lt;li&gt;シビュラの目&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;浅い感想とか:67857ad4aea3653b161c8e432b631967&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;地図にない街が一番面白かった。並行世界が現実に侵食していく過程に気づいてしまうってのが一番辛いことかな。気づかなければ環境が変わっても自然に馴染めるのに。&lt;/p&gt;
+
+&lt;p&gt;他の話は人間って止めてくれるものがないと行きつくとこまで行ってしまっうそういった怖さが中心で
+自分のストッパーをきちんと設定しないとなーと思った。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>tokyo_20150429</title>
+      <link>http://motomizuki.github.io/blog/2015/04/30/tokyo_20150429/</link>
+      <pubDate>Thu, 30 Apr 2015 07:37:21 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/30/tokyo_20150429/</guid>
+      <description>
+
+&lt;h2 id=&#34;公演情報:1b534ad51574e6d81ec5a3d6784d7537&#34;&gt;公演情報&lt;/h2&gt;
+
+&lt;p&gt;日時：2015/04/29 14:00~15:3ぐらい
+場所：東京芸術劇場&lt;/p&gt;
+
+&lt;h2 id=&#34;program:1b534ad51574e6d81ec5a3d6784d7537&#34;&gt;Program&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;アルヴェーン：祝典序曲 op.25&lt;/li&gt;
+&lt;li&gt;ニールセン：序曲《ヘリオス》 op.17&lt;/li&gt;
+&lt;li&gt;シベリウス：交響詩《フィンランディア》 op.26&lt;/li&gt;
+&lt;li&gt;グリーグ：劇音楽《ペール・ギュント》 op.23 * （全曲版より抜粋)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;encore:1b534ad51574e6d81ec5a3d6784d7537&#34;&gt;Encore&lt;/h2&gt;
+
+&lt;p&gt;なし&lt;/p&gt;
+
+&lt;h2 id=&#34;コメント:1b534ad51574e6d81ec5a3d6784d7537&#34;&gt;コメント&lt;/h2&gt;
+
+&lt;p&gt;歌唱付きを聞いたのは初めてで、思ってたよりも良かった。
+一番良かったのはニールセンの序曲ヘリオスだった。終わった瞬間に余韻もなくブラボーが飛んできたのはびっくりしたけど、都響の名物らしい。。。&lt;/p&gt;
+
+&lt;p&gt;グリーグは抜粋でなくきちんと聞きたくなったので、探してみる&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>totalrecall_20150428</title>
+      <link>http://motomizuki.github.io/blog/2015/04/28/totalrecall_20150428/</link>
+      <pubDate>Tue, 28 Apr 2015 00:39:01 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/28/totalrecall_20150428/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/519e46wzhIL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:73b4b0295047545568230541faf8821c&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;ディックさんの短編集。収録作品は&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;トータル・リコール&lt;/li&gt;
+&lt;li&gt;出口はどこかの入り口&lt;/li&gt;
+&lt;li&gt;地球防衛軍&lt;/li&gt;
+&lt;li&gt;訪問者&lt;/li&gt;
+&lt;li&gt;世界をわが手に&lt;/li&gt;
+&lt;li&gt;ミスター・スペースシップ&lt;/li&gt;
+&lt;li&gt;非O&lt;/li&gt;
+&lt;li&gt;フード・メーカー&lt;/li&gt;
+&lt;li&gt;吊されたよそ者&lt;/li&gt;
+&lt;li&gt;マイノリティ・レポート&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;浅い感想とか:73b4b0295047545568230541faf8821c&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;一番好きな話は世界を我が手にで次は訪問者だった。
+どれも面白いけどね！&lt;/p&gt;
+
+&lt;p&gt;世界をわが手にな世界は近づいていると思う。
+観測者になった瞬間から、より上位から観測されていることを否定できなくなる的な。箱庭とかシュミレーションって怖楽しい感じ。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>kowaie_20150426</title>
+      <link>http://motomizuki.github.io/blog/2015/04/26/kowaie_20150426/</link>
+      <pubDate>Sun, 26 Apr 2015 21:22:30 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/26/kowaie_20150426/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51hCWPndtjL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;概要:d77489dcbbab2635239b23236957abe3&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;一見恐ろしさを感じないような絵でも、その絵が描かれた時代、背景、絵の構成、描かれているイコンの意味といったことから、絵に込められた恐ろしさを説明している。&lt;/p&gt;
+
+&lt;h1 id=&#34;浅い感想とか:d77489dcbbab2635239b23236957abe3&#34;&gt;浅い感想とか&lt;/h1&gt;
+
+&lt;p&gt;美術館とかにもそれなりに行って絵を見るけど、あくまで絵の表面しか見て居なかったんだなーと気付かされた。芸術をより楽しむためには広いバックグランドの知識が必要で勉強して行きたい。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>torisimarare_20150423</title>
+      <link>http://motomizuki.github.io/blog/2015/04/23/torisimarare_20150423/</link>
+      <pubDate>Thu, 23 Apr 2015 23:50:39 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/23/torisimarare_20150423/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51%2BZvYHR8PL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;概要:2633dbb083c86b24f2f6bda9d01dc102&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;何をやってもダメないじめられっ子が被取締役として、
+会社の雰囲気を上げていく話。
+ゆくゆくは自分もうまくやれて、社内で認められていく&lt;/p&gt;
+
+&lt;h2 id=&#34;浅い感想とか:2633dbb083c86b24f2f6bda9d01dc102&#34;&gt;浅い感想とか&lt;/h2&gt;
+
+&lt;p&gt;結局結束するには共通の敵か自分たちよりも下がいるという安心感なんだなーと思った。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>blueoceam_20150423</title>
+      <link>http://motomizuki.github.io/blog/2015/04/23/blueoceam_20150423/</link>
+      <pubDate>Thu, 23 Apr 2015 22:51:27 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/23/blueoceam_20150423/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/8161%2BCqeewL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;概要:a7c03e1874ad1fd70ec7a77c0f01fafb&#34;&gt;概要&lt;/h2&gt;
+
+&lt;p&gt;技術進歩のスピードが格段に早まり、生産性が格段に向上した現代では、需要を供給が上回る事態が様々な業界に広がっている。需要を供給が上回る業界では、製品、ブランドの差別化が困難になり皆が同じ価値観の中で戦っている。そういったレッドオーシャンから抜け出し、ブルーオーシャンの世界を見つけるには、顧客に対する製品やブランドの価値を再定義する必要がある。&lt;/p&gt;
+
+&lt;p&gt;再定義には次のような４つの問いを通してロジックやビジネスモデルを考えると良い。
+Q. 業界常識として製品やサービスに備わるもののうち取り除くべきものは何か。
+Q. 業界基準と比べて思いっきり減らすべきものは何か。
+Q. 業界基準と比べて増やすべきものは何か。
+Q. 業界でこれまでにない、今後付け加える要素は何か。&lt;/p&gt;
+
+&lt;p&gt;トヨタはアメ車に比べて、豪華な車内設備を取り除き、車のサイズとスピードを減らし、燃費を向上さることでコンパクトカーというブルーオーシャンを作り出した。&lt;/p&gt;
+
+&lt;h2 id=&#34;浅い感想とか:a7c03e1874ad1fd70ec7a77c0f01fafb&#34;&gt;浅い感想とか&lt;/h2&gt;
+
+&lt;p&gt;みんながやっていること、流行といったものは一番競争が激しい部分であり、
+差異をだしずらい、いかに他と違うことを行っていくか、違いを作り出していけるかが重要なんだなーと感じた。自分自身と組織や社会の際を考えて、増やす部分、僕にしかできない部分を強くしていきたい。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>distcp_20150416</title>
+      <link>http://motomizuki.github.io/blog/2015/04/16/distcp_20150416/</link>
+      <pubDate>Thu, 16 Apr 2015 23:49:14 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/16/distcp_20150416/</guid>
+      <description>
+
+&lt;h2 id=&#34;目的:a0ed70356740ff40d5d679d15c824608&#34;&gt;目的&lt;/h2&gt;
+
+&lt;p&gt;Hadoopサーバを更新するにあたってファイルを引越しする。旧サーバはCDH4で新サーバはCDH5で構成されて、ファイルをローカルに落とすことなく直接hdfsにコピーしたい。&lt;/p&gt;
+
+&lt;h2 id=&#34;はまったところ:a0ed70356740ff40d5d679d15c824608&#34;&gt;はまったところ&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;バージョンが違うためにhdfsプロトコルではエラーが発生&lt;/li&gt;
+&lt;li&gt;ワイルドカードでのファイル指定ができない&lt;/li&gt;
+&lt;li&gt;ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;解決策:a0ed70356740ff40d5d679d15c824608&#34;&gt;解決策&lt;/h2&gt;
+
+&lt;h3 id=&#34;バージョンが違うためにhdfsプロトコルではエラーが発生:a0ed70356740ff40d5d679d15c824608&#34;&gt;バージョンが違うためにhdfsプロトコルではエラーが発生&lt;/h3&gt;
+
+&lt;p&gt;通常は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp hdfs://FROM_HOST/filedir hdfs://TO_HOST/firedire
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でコピーが行われるのだが、バージョンが異なるとエラーが発生する。&lt;/p&gt;
+
+&lt;p&gt;そこで、コピー先(TO_HOST)にsshして以下のコマンドを実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp hftp://FROM_HOST/filedir hdfs://TO_HOST/firedire
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラスター同士のバージョンが違う場合はfromのプロトコルをhdfsからhftpもしくはwebhdfsに変更するとコピーができる。&lt;/p&gt;
+
+&lt;h3 id=&#34;ワイルドカードでのファイル指定ができない:a0ed70356740ff40d5d679d15c824608&#34;&gt;ワイルドカードでのファイル指定ができない&lt;/h3&gt;
+
+&lt;p&gt;数百のファイルをコピーする必要があったのだが、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp hftp://FROM_HOST/hoge/*.log hdfs://TO_HOST/hoge/.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;のようにワイルドカード(*)を利用するとそんなファイルはないと怒られる。
+そこで、コピー元のサーバのhdfsからコピーするファイルのリストを作成する必要がある。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop fs -ls hdfs:///hoge/ | grep -e *.log | awk &#39;{gsub(&amp;quot;hdfs&amp;quot;, &amp;quot;hftp&amp;quot;);gsub(&amp;quot;///&amp;quot;, &amp;quot;//FROM_HOST/&amp;quot;);print $8&#39;}   &amp;gt; input-files.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このinput-files.txtをTO_HOSTにもっていき以下を実行でこぴーができる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop fs -put input-files.txt  .
+hadoop distcp -f input-files.txt hdfs://TO_HOST/hoge/.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生:a0ed70356740ff40d5d679d15c824608&#34;&gt;ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生&lt;/h3&gt;
+
+&lt;p&gt;次のコマンドでpermissionを変更&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo -u hdfs hadoop fs -chmod -R 777 /hoge
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

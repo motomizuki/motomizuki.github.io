@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Edison on motomizuki blog</title>
+    <link>http://motomizuki.github.io/categories/edison/</link>
+    <description>Recent content in Edison on motomizuki blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Sat, 02 May 2015 01:45:13 +0900</lastBuildDate>
+    <atom:link href="http://motomizuki.github.io/categories/edison/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>intel_start_20150502</title>
+      <link>http://motomizuki.github.io/blog/2015/05/02/intel_start_20150502/</link>
+      <pubDate>Sat, 02 May 2015 01:45:13 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/05/02/intel_start_20150502/</guid>
+      <description>
+
+&lt;h1 id=&#34;概要:1b5e181266a082df79f13dab2f943bfc&#34;&gt;概要&lt;/h1&gt;
+
+&lt;p&gt;Intel Edison Ardino Kit を購入したので、
+箱を開けてからセットアップするまでのメモ
+&lt;a href=&#34;https://software.intel.com/en-us/iot/library/edison-getting-started&#34;&gt;Intelの出してるチュートリアル参照&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;組み立て:1b5e181266a082df79f13dab2f943bfc&#34;&gt;組み立て&lt;/h1&gt;
+
+&lt;p&gt;Edisonさんをボードのピンにさして、ちっちゃなナットを締めるだけ。ナットは本当に小さいので無くさないように。ビスを締める際は奥側のビスを強めに締めるといいかも。対角線でしか固定されないので、チップが湾曲してボードと微妙な隙間ができて電源が付かなかった。。
+&lt;img src=&#34;http://i.gyazo.com/17106a4f8fe140690535b19aad91776d.png&#34; alt=&#34;img&#34; /&gt;
+
+あとは4つの足を付けて組み立て完成。&lt;/p&gt;
+
+&lt;h1 id=&#34;セットアップ:1b5e181266a082df79f13dab2f943bfc&#34;&gt;セットアップ&lt;/h1&gt;
+
+&lt;h2 id=&#34;ログイン確認:1b5e181266a082df79f13dab2f943bfc&#34;&gt;ログイン確認&lt;/h2&gt;
+
+&lt;p&gt;J18(usb給電)とJ3(usb接続)にmicro USBをさすとPCと接続できる。チュートリル通りに&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;screen /dev/cu.usbserial-XXXXXXXX 115200 -L
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とやってEnterを2回押してログインできる。
+login name は root　で初回のパスワードは無し！&lt;/p&gt;
+
+&lt;h2 id=&#34;ファームウェアのアップデート:1b5e181266a082df79f13dab2f943bfc&#34;&gt;ファームウェアのアップデート&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Configure Username and Password&lt;/strong&gt;の最初に&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;Flash your Firmware to get the latest features and important updates.&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;とあるので最新イメージをEdisonに書き込む。最新イメージは&lt;a href=&#34;http://www.intel.com/support/edison/sb/CS-035180.html&#34;&gt;公式サイト&lt;/a&gt;で落とせるYocto complete image&lt;/p&gt;
+
+&lt;p&gt;既存のファイル、フォルダを削除してダウンロードしたファイルを全部Edisonディレクトリに移す。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rm -rf /Volumes/Edison/*
+rm -rf /Volumes/Edison/\.*
+cp ~/Downloads/edison-image-ww05-15/* /Volumes/Edison/.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;screen&lt;/code&gt;でEdisonに入り&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;reboot ota
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でアップデートが完了する。
+reboot中に電源が落ちないよう注意する。&lt;/p&gt;
+
+&lt;h2 id=&#34;edisonのセットアップ:1b5e181266a082df79f13dab2f943bfc&#34;&gt;Edisonのセットアップ&lt;/h2&gt;
+
+&lt;p&gt;Edisonに入ってから&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;configure_edison --setup 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で初期設定をしていく。
+設定項目はrootのパスワードと, edisonの名前(host名),
+使用するwifi。
+設定後にedisonの名前で\&lt;a href=&#34;http://host.local`でEdisonのwebサーバにアクセスできる。sshも&#34;&gt;http://host.local`でEdisonのwebサーバにアクセスできる。sshも&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh root@host.local
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で利用可能になり、USBでつながなくてもEdisonを操作できるようになる。ただsshよりもシリアル接続の方がレスポンスがいいのでストレスは少ないかも。&lt;/p&gt;
+
+&lt;h1 id=&#34;lチカ:1b5e181266a082df79f13dab2f943bfc&#34;&gt;Lチカ&lt;/h1&gt;
+
+&lt;p&gt;Hello world!的な存在らしいLチカをためしてみた。
+&lt;img src=&#34;http://i.gyazo.com/d4ef680f9f68133d498d8a37dd93f93f.png&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int led = 13;
+
+void setup() {
+    // put your setup code here,  to run once:
+    pinMode(led, OUTPUT);
+}
+
+void loop() {
+    // put your main code here,  to run repeatedly:
+    digitalWrite(led, HIGH);
+    delay(1000);
+    digitalWrite(led,  LOW);
+    delay(1000);
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

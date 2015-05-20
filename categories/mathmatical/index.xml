@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mathmatical on motomizuki blog</title>
+    <link>http://motomizuki.github.io/categories/mathmatical/</link>
+    <description>Recent content in Mathmatical on motomizuki blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Sun, 08 Mar 2015 22:47:37 +0900</lastBuildDate>
+    <atom:link href="http://motomizuki.github.io/categories/mathmatical/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>biseki_20150308</title>
+      <link>http://motomizuki.github.io/blog/2015/03/08/biseki_20150308/</link>
+      <pubDate>Sun, 08 Mar 2015 22:47:37 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/03/08/biseki_20150308/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/51OJ7isvhKL.jpg&#34; alt=&#34;img&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;本の概要:0fe7c4e766d6aae7dbb337c50e35dc4f&#34;&gt;本の概要&lt;/h2&gt;
+
+&lt;p&gt;微分積分の入門書．&lt;br /&gt;
+微分や積分のイメージを作るところやなぜそう求められるのかを意識した解説になっている．
+問題にたいしていかに微小部分を集めるか，近似できるかを一番重要視しており，
+作った式をどう計算すればいいかといったテクニックはあまり触れていない．
+そもそも計算は機械に任せちゃえという話．&lt;/p&gt;
+
+&lt;h2 id=&#34;浅い感想とか:0fe7c4e766d6aae7dbb337c50e35dc4f&#34;&gt;浅い感想とか&lt;/h2&gt;
+
+&lt;p&gt;グラフ理論や最適化問題みたいな離散数学ばかりやっていたので，解析学にも触れたいなーというモチベーション．解析学やるにしても一番基本の微分積分に離れて久しく，微積を思い出すため読み物的な本書を選んだ．&lt;/p&gt;
+
+&lt;p&gt;積分の話から始まり，こんな話あったなーと思い出しながら楽しく読めた．
+積分とは一見計算が困難な形をいかに&lt;strong&gt;計算可能な形に近似するか&lt;/strong&gt;という考え．
+その近似が極限まで小さくなり線のようになれば，どんな形の面積も長さも体積も求められる.
+公式で覚えていた球の面積や体積といったものも適切に近似し積分することで求められる.&lt;/p&gt;
+
+&lt;p&gt;ネイピア数の由来はlogうんちゃらで覚えていたけど，そもそも通常では積分できない1/xの関数をいかにうまく表せるかの試行錯誤の結果logとセットで生まれたらしい．&lt;/p&gt;
+
+&lt;p&gt;いかに表せる形に持っいくか, いかに近似するかというのは広い場面で必要な考え方だなと．これから解析学系も積み上げていきたい．&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

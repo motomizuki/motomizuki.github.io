@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hdfs on motomizuki blog</title>
+    <link>http://motomizuki.github.io/categories/hdfs/</link>
+    <description>Recent content in Hdfs on motomizuki blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Thu, 16 Apr 2015 23:49:14 +0900</lastBuildDate>
+    <atom:link href="http://motomizuki.github.io/categories/hdfs/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>distcp_20150416</title>
+      <link>http://motomizuki.github.io/blog/2015/04/16/distcp_20150416/</link>
+      <pubDate>Thu, 16 Apr 2015 23:49:14 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/04/16/distcp_20150416/</guid>
+      <description>
+
+&lt;h2 id=&#34;目的:a0ed70356740ff40d5d679d15c824608&#34;&gt;目的&lt;/h2&gt;
+
+&lt;p&gt;Hadoopサーバを更新するにあたってファイルを引越しする。旧サーバはCDH4で新サーバはCDH5で構成されて、ファイルをローカルに落とすことなく直接hdfsにコピーしたい。&lt;/p&gt;
+
+&lt;h2 id=&#34;はまったところ:a0ed70356740ff40d5d679d15c824608&#34;&gt;はまったところ&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;バージョンが違うためにhdfsプロトコルではエラーが発生&lt;/li&gt;
+&lt;li&gt;ワイルドカードでのファイル指定ができない&lt;/li&gt;
+&lt;li&gt;ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;解決策:a0ed70356740ff40d5d679d15c824608&#34;&gt;解決策&lt;/h2&gt;
+
+&lt;h3 id=&#34;バージョンが違うためにhdfsプロトコルではエラーが発生:a0ed70356740ff40d5d679d15c824608&#34;&gt;バージョンが違うためにhdfsプロトコルではエラーが発生&lt;/h3&gt;
+
+&lt;p&gt;通常は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp hdfs://FROM_HOST/filedir hdfs://TO_HOST/firedire
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でコピーが行われるのだが、バージョンが異なるとエラーが発生する。&lt;/p&gt;
+
+&lt;p&gt;そこで、コピー先(TO_HOST)にsshして以下のコマンドを実行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp hftp://FROM_HOST/filedir hdfs://TO_HOST/firedire
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラスター同士のバージョンが違う場合はfromのプロトコルをhdfsからhftpもしくはwebhdfsに変更するとコピーができる。&lt;/p&gt;
+
+&lt;h3 id=&#34;ワイルドカードでのファイル指定ができない:a0ed70356740ff40d5d679d15c824608&#34;&gt;ワイルドカードでのファイル指定ができない&lt;/h3&gt;
+
+&lt;p&gt;数百のファイルをコピーする必要があったのだが、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp hftp://FROM_HOST/hoge/*.log hdfs://TO_HOST/hoge/.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;のようにワイルドカード(*)を利用するとそんなファイルはないと怒られる。
+そこで、コピー元のサーバのhdfsからコピーするファイルのリストを作成する必要がある。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop fs -ls hdfs:///hoge/ | grep -e *.log | awk &#39;{gsub(&amp;quot;hdfs&amp;quot;, &amp;quot;hftp&amp;quot;);gsub(&amp;quot;///&amp;quot;, &amp;quot;//FROM_HOST/&amp;quot;);print $8&#39;}   &amp;gt; input-files.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このinput-files.txtをTO_HOSTにもっていき以下を実行でこぴーができる。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop fs -put input-files.txt  .
+hadoop distcp -f input-files.txt hdfs://TO_HOST/hoge/.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生:a0ed70356740ff40d5d679d15c824608&#34;&gt;ユーザフォルダじゃない場所にコピーするのでpermissionエラーが発生&lt;/h3&gt;
+
+&lt;p&gt;次のコマンドでpermissionを変更&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo -u hdfs hadoop fs -chmod -R 777 /hoge
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

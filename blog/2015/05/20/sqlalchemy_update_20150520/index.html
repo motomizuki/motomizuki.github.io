@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title> SQLAlchemyでのupdate &middot; motomizuki</title>
+
+  
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/poole.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/hyde.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/poole-overrides.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/hyde-x.css">
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/share.css">
+
+  <link rel="stylesheet" href="http://motomizuki.github.io//css/highlight/sunburst.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link href="/favicon.png" rel="icon">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="sqlalchemy_update_20150520 &middot; motomizuki" />
+
+  <meta name="description" content="SQLAlchemyを利用したupdateについてのメモ">
+  <meta name="keywords" content="memo,python,SQLAlchemy,Flask">
+  
+</head>
+<body class="theme-base-09 layout-reverse">
+<div class="topbar">
+  <div class="container topbar-sticky">
+    <div class="topbar-about">
+      
+      <h1>motomizuki</h1>
+      <p class="lead">Book,  Classic,  Programming</p>
+    </div>
+
+    <ul class="topbar-nav">
+      <li class="topbar-nav-item"><a href="http://motomizuki.github.io//">Blog</a></li>
+      
+
+      <li class="topbar-nav-item"><a href="https://github.com/motomizuki">GitHub</a></li>
+      
+      
+      
+      <li class="topbar-nav-item"><a href="https://twitter.com/motomizuki">Twitter</a></li>
+    </ul>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>SQLAlchemyでのupdate</h1>
+    <span class="post-date">May 20, 2015 &middot; 1 minute read</span>
+    
+    <span class="post-date">
+    
+    <a class="label" href="http://motomizuki.github.io//categories/memo">memo</a><a class="label" href="http://motomizuki.github.io//categories/python">python</a><a class="label" href="http://motomizuki.github.io//categories/sqlalchemy">SQLAlchemy</a><a class="label" href="http://motomizuki.github.io//categories/flask">Flask</a><a class="label" href="http://motomizuki.github.io//categories/web">web</a>
+    </span>
+    
+
+<h1 id="概要:ab29909ef1624f319953bc652660642e">概要</h1>
+
+<p>ノイズのある<code>dictionary</code>データからSQLAlchemyを使って簡単にupdateしたい。
+フォームからデータを受け取るとModelに必要のないデータも含まれてしまうことがある。
+そういったものをいちいち指定せずによしなにupdateを行えるようにする。</p>
+
+<h1 id="通常のupdateの方法:ab29909ef1624f319953bc652660642e">通常のupdateの方法</h1>
+
+<p>通常のupdateは次のような感じ。</p>
+
+<pre><code class="language-python">stmt = Users.update().\
+            where(Users.id==5).\
+            values(name='user #5')
+</code></pre>
+
+<p>もしくは</p>
+
+<pre><code class="language-python">user = Users.query.filter_by(id=5).first()
+user.name=&quot;hoge&quot;
+db.session.commit()
+</code></pre>
+
+<h1 id="今回の方法:ab29909ef1624f319953bc652660642e">今回の方法</h1>
+
+<p><code>setattr(obj, key, value)</code>を使っていく。</p>
+
+<pre><code class="language-python">class Users(db.Model):
+    id = db.Column(db.Integer, primarykey=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, id, name, password):
+        self.id = user_id
+        self.name = name
+        self.password = password
+
+    def update_dict(dict):
+        for name, value in dict.items():
+            if name in self.__dict__:
+                setattr(self, name, value)
+
+
+# 更新操作
+dict = {&quot;name&quot;; hoge, &quot;password&quot;:fuga}
+user=Users.query.filter_by(id=5).first()
+user.update_form(dict)
+db.session.commit()
+</code></pre>
+
+<p>こんな感じの<code>update_dict</code>をモデルに実装すると、
+<code>dictionary</code>を無造作に入れても、定義されている値のみが変更され、
+データの更新が行われるので楽。
+フォームをモデルに合うように作るだけで、データの追加更新を簡単に実装できるようになる。</p>
+
+    <ul id="social_box">
+    <li><a href="http://twitter.com/share?text=SQLAlchemy%e3%81%a7%e3%81%aeupdate" target="_blank"><img src="/img/sns_tw_ico.png" alt="twitter"></a><span></span></li>
+    <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fmotomizuki.github.io%2fblog%2f2015%2f05%2f20%2fsqlalchemy_update_20150520%2f" target="_blank"><img src="/img/sns_fb_ico.png" alt="facebook"></a><span></span></li>
+    <li><a href="http://b.hatena.ne.jp/entry/http://motomizuki.github.io/blog/2015/05/20/sqlalchemy_update_20150520/" target="_blank"><img src="/img/sns_hb_ico.png" alt=""></a><span></span></li>
+</ul>
+
+
+  </div>
+</div>
+<p class="license">Copyright &copy; 2015 <a href="https://twitter.com/motomizuki">@motomizuki</a> 
+Powered by <a href="http://hugo.spf13.com">Hugo</a>
+
+<script src="http://motomizuki.github.io//js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-29342124-2', 'auto');
+    ga('send', 'pageview');
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on motomizuki blog</title>
+    <link>http://motomizuki.github.io/categories/hugo/</link>
+    <description>Recent content in Hugo on motomizuki blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Sat, 28 Feb 2015 11:46:32 +0900</lastBuildDate>
+    <atom:link href="http://motomizuki.github.io/categories/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>HugoDeploy</title>
+      <link>http://motomizuki.github.io/blog/2015/02/28/hugodeploy/</link>
+      <pubDate>Sat, 28 Feb 2015 11:46:32 +0900</pubDate>
+      
+      <guid>http://motomizuki.github.io/blog/2015/02/28/hugodeploy/</guid>
+      <description>
+
+&lt;p&gt;このブログを作るにあたって行ったことのメモ&lt;/p&gt;
+
+&lt;h2 id=&#34;ブログ構成:2ce0096fa06c19633af18875afd48bcb&#34;&gt;ブログ構成&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;エンジン : Hugo&lt;/li&gt;
+&lt;li&gt;ホスティングサービス : GitHub Page&lt;/li&gt;
+&lt;li&gt;CIサービス : Wercker&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;流れ:2ce0096fa06c19633af18875afd48bcb&#34;&gt;流れ&lt;/h2&gt;
+
+&lt;p&gt;基本的には&lt;a href=&#34;http://gohugo.io/overview/introduction/&#34;&gt;Hugo&lt;/a&gt;のドキュメント通り.
+自動デプロイに関しても&lt;a href=&#34;http://gohugo.io/tutorials/automated-deployments/&#34;&gt;Automated deployments&lt;/a&gt;通り.&lt;/p&gt;
+
+&lt;h3 id=&#34;hugoのインストール:2ce0096fa06c19633af18875afd48bcb&#34;&gt;Hugoのインストール&lt;/h3&gt;
+
+&lt;p&gt;GitHubの&lt;a href=&#34;https://github.com/spf13/hugo&#34;&gt;リポジトリ&lt;/a&gt;から直接入手&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ go get -v github.com/spf13/hugo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Macの場合はbrewでインストール可能&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ brew install hugo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ブログを作成:2ce0096fa06c19633af18875afd48bcb&#34;&gt;ブログを作成&lt;/h3&gt;
+
+&lt;h4 id=&#34;本体の作成:2ce0096fa06c19633af18875afd48bcb&#34;&gt;本体の作成&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ hugo new site blog.motomizuki
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以下は&lt;code&gt;blog.motomizuki&lt;/code&gt;内での作業&lt;/p&gt;
+
+&lt;h4 id=&#34;コンテンツの作成:2ce0096fa06c19633af18875afd48bcb&#34;&gt;コンテンツの作成&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ hugo new about.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;記事の作成:2ce0096fa06c19633af18875afd48bcb&#34;&gt;記事の作成&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ hugo new post/title.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Markdownの基本テンプレートは&lt;code&gt;archetypes&lt;/code&gt;内の&lt;code&gt;default.md&lt;/code&gt;が適用される&lt;/p&gt;
+
+&lt;h4 id=&#34;ブログにテーマ-hyde-x-を適用:2ce0096fa06c19633af18875afd48bcb&#34;&gt;ブログにテーマ(hyde-x)を適用&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ mkdir themes
+$ cd themes
+$ git clone https://github.com/zyro/hyde-x
+$ hugo -t hyde-x
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;ブログのpreview:2ce0096fa06c19633af18875afd48bcb&#34;&gt;ブログのpreview&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ hugo server --theme=ThemaName --buildDraft
+2 pages created
+0 tags created
+0 categories created
+in 5 ms
+Serving pages from exampleHugoSite/public
+Web Server is available at http://localhost:1313
+Press Ctrl+C to stop
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ビルドで使用するテーマをThemaNameで設定&lt;/p&gt;
+
+&lt;p&gt;ブログを編集しながら確認したい場合は&lt;code&gt;--watch&lt;/code&gt;を付ける&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ hugo server --theme=ThemaName --buildDrafts --watch
+2 pages created
+0 tags created
+0 categories created
+in 5 ms
+Watching for changes in exampleHugoSite/content
+Serving pages from exampleHugoSite/public
+Web Server is available at http://localhost:1313
+Press Ctrl+C to stop
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;werckerでgithub-pagesへ自動デプロイ:2ce0096fa06c19633af18875afd48bcb&#34;&gt;WerckerでGitHub Pagesへ自動デプロイ&lt;/h3&gt;
+
+&lt;p&gt;Werckerを使い，ブログソースを&lt;code&gt;git push&lt;/code&gt;したら
+GitHub Pages(&lt;a href=&#34;https://username.github.io)に自動デプロイ&#34;&gt;https://username.github.io)に自動デプロイ&lt;/a&gt;
+するようにする．&lt;/p&gt;
+
+&lt;h4 id=&#34;gitの設定:2ce0096fa06c19633af18875afd48bcb&#34;&gt;gitの設定&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ git init
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;自動デプロイの際に&lt;strong&gt;public&lt;/strong&gt;ディレクトリが自動生成されるので,
+既存の&lt;strong&gt;public&lt;/strong&gt;はgitで管理しない.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;$ echo &amp;quot;/public&amp;quot; &amp;gt;&amp;gt; .gitignore
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;空のディレクトリがあるとWerckerに警告されるので，staticディレクトリ内に
+とりあえず&lt;code&gt;rbots.txt&lt;/code&gt;を置いておく．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;echo &amp;quot;User-agent: *\nDisallow:&amp;quot; &amp;gt; static/robots.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;githubのプロジェクトに追加:2ce0096fa06c19633af18875afd48bcb&#34;&gt;GitHubのプロジェクトに追加&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-zsh&#34;&gt;git add .
+git commit -m &amp;quot;Initial commit&amp;quot;
+git remote add origin git@github.com:motomizuki/blog.motomizuki.git
+git push -u origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;github-pages用リポジトリを用意:2ce0096fa06c19633af18875afd48bcb&#34;&gt;GitHub Pages用リポジトリを用意&lt;/h4&gt;
+
+&lt;p&gt;username.github.ioというリポジトリを作成.&lt;/p&gt;
+
+&lt;h4 id=&#34;werckerの設定:2ce0096fa06c19633af18875afd48bcb&#34;&gt;Werckerの設定&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://wercker.com/&#34;&gt;Wercker&lt;/a&gt;のアカウントをREGISTER USING GITHUBから作成.
+APPを作成し必要な項目を埋ていく，&lt;strong&gt;Configure access&lt;/strong&gt;ではwithout using an SSHを選択する.
+APPのビルド，デプロイ設定を&lt;strong&gt;Wercker.yml&lt;/strong&gt;で記述し, リポジトリ(blog.motomizuki)に追加する.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-Wercker.yml&#34;&gt;box: wercker/default
+build:
+    steps:
+        - arjen/hugo-build@1.0.2:
+            theme: hyde-x
+            flags: --buildDrafts=true
+deploy:
+    steps:
+        - lukevivier/gh-pages@0.2.1:
+            token: $GIT_TOKEN
+            basedir: public
+            repo: motomizuki/motomizuki.github.io
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;インデントは半角スペース4つで！&lt;/em&gt;&lt;/strong&gt;
+repoでデプロイ先のリポジトリを設定しないと上手く動かなかった.
+ビルド, デプロイも成功となるが，実際にリポジトリは更新されないという状況.&lt;/p&gt;
+
+&lt;h4 id=&#34;appの設定:2ce0096fa06c19633af18875afd48bcb&#34;&gt;APPの設定&lt;/h4&gt;
+
+&lt;p&gt;SettingのDEPLOY TARGETSをcustomに．
+Add new variableでnameをGIT_TOKEN, valueはGitHubのPersonal access tokensでgenerateできる文字列にして登録．&lt;/p&gt;
+
+&lt;h3 id=&#34;終わり:2ce0096fa06c19633af18875afd48bcb&#34;&gt;終わり&lt;/h3&gt;
+
+&lt;p&gt;ここまで設定すると記事を書いてソースをpushすると自動でデプロイされる．&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
